@@ -27,3 +27,7 @@ body {
     background: #a2beff;
     transition: .6s;
 }
+
+.li-selected {
+    background: #8caeff !important;
+}
