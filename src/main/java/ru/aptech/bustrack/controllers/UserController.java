@@ -2,6 +2,8 @@ package ru.aptech.bustrack.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ru.aptech.bustrack.entities.User;
 import ru.aptech.bustrack.services.UserService;

@@ -1,20 +1,37 @@
 package ru.aptech.bustrack.configs;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import ru.aptech.bustrack.services.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
+    @Autowired
+    private CustomAuthProvider customAuthProvider; // указываем bean нашего customAuthProvider
 
-
+    @Bean
+    public CustomUserDetailsService userDetailsService() {
+        return new CustomUserDetailsService();
+    }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+    @Bean
+    public AuthenticationProvider authProvider() {
+        CustomAuthProvider authProvider = new CustomAuthProvider();
+        authProvider.setUserDetailsService(userDetailsService()); //сюда передаем компоненты из CustomUserDetailsService
+        authProvider.setPasswordEncoder(passwordEncoder()); //сюда передаем компоненты из CustomUserDetailsService
+        return authProvider;
+    }
     @Bean
     public SecurityFilterChain securiryFilterChain (HttpSecurity http) throws Exception {
         http
@@ -22,32 +39,24 @@ public class SecurityConfiguration {
                         .antMatchers("/css/**").permitAll() //**- означает, все что лежит в этой папке
                         .antMatchers("/img/**").permitAll()
                         .antMatchers("/js/**").permitAll()
-                        .antMatchers("/reg").permitAll()
-                        .antMatchers("/user").permitAll()
-                        .antMatchers("/api/**").permitAll()
-                        .antMatchers("/admin").permitAll()
+                        .antMatchers("/api/user").permitAll()
+                        .antMatchers("/user").hasAuthority("USER") //разрешено только для юзера
+                        .antMatchers("/admin").hasAuthority("ADMIN")
                         .antMatchers("/").permitAll() //список паттернов (маппингов) путей которые приходят разрешены
                         //.antMatchers("/user").hasRole("ADMIN") //доступ на определенный раздел сайта, например user, с сущностью ролей под ADMINом
                         .anyRequest().authenticated() // все другие запросы должны быть через авторизацию
                 )
-                .formLogin((form) -> form
-                       .permitAll()
+                .authenticationProvider(authProvider()) //это Builder-метод сюда передается сконфигурированный bean - AuthenticationProvider authProvider
+                .formLogin((form) -> form  //страница входа
+                        .loginPage("/") //страница входа, в случае чего нас туда перебрасывает
+                        .loginProcessingUrl("/login") //куда мы отправляем наш логин и пароль
+                        .usernameParameter("login") //параметр для входа юзера - по логину
+                        .permitAll()
                 )
-
                 .logout((logout) -> logout.permitAll()); //страница выхода
 
-            http.csrf().disable(); //отключим временно csrf
-            http.headers().frameOptions().disable(); //отключим временно проверку заголовков
+            http.csrf().disable(); //отключим временно csrf встраивание третьего человека в сеть
+            http.cors().disable(); //отключили защиту когда с другого сервера пытаются на наш обратиться (используются только доверенные адреса)
             return http.build();
         }
-    @Bean
-    public UserDetailsService userDetailsService(){ //стандартный класс в пакете
-        UserDetails user = //создаем детали пользователя
-                User.withDefaultPasswordEncoder() //с дефолтным шифрацией пароля
-                        .username("user")
-                        .password("password")
-                        .roles("USER")
-                        .build();
-        return new InMemoryUserDetailsManager(user); //хранить в памяти
-    }
 }
