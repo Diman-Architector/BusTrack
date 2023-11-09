@@ -30,6 +30,11 @@ public class MainController {
         return "admin";
     }
 
+    @GetMapping("/user")
+    public String user() {
+        return "user";
+    }
+
 
     //Этот код мы не используем, он относится к ТИМЛИФ:
 //    @PostMapping("/user")

@@ -9,8 +9,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import ru.aptech.bustrack.services.CustomUserDetailsService;
 
+@SuppressWarnings("unused")
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
@@ -20,6 +23,16 @@ public class SecurityConfiguration {
     @Bean
     public CustomUserDetailsService userDetailsService() {
         return new CustomUserDetailsService();
+    }
+
+    @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        return new CustomAuthFailureHandler();
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new CustomAuthSuccessHandler();
     }
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -40,14 +53,16 @@ public class SecurityConfiguration {
                         .antMatchers("/img/**").permitAll()
                         .antMatchers("/js/**").permitAll()
                         .antMatchers("/api/user").permitAll()
-                        .antMatchers("/user").hasAuthority("USER") //разрешено только для юзера
-                        .antMatchers("/admin").hasAuthority("ADMIN")
+                        .antMatchers("/user").hasAuthority(Constants.ROLE_USER_NAME) //разрешено только для юзера
+                        .antMatchers("/admin").hasAuthority(Constants.ROLE_ADMIN_NAME)
                         .antMatchers("/").permitAll() //список паттернов (маппингов) путей которые приходят разрешены
                         //.antMatchers("/user").hasRole("ADMIN") //доступ на определенный раздел сайта, например user, с сущностью ролей под ADMINом
                         .anyRequest().authenticated() // все другие запросы должны быть через авторизацию
                 )
                 .authenticationProvider(authProvider()) //это Builder-метод сюда передается сконфигурированный bean - AuthenticationProvider authProvider
                 .formLogin((form) -> form  //страница входа
+                        .failureHandler(authenticationFailureHandler()) //для bean аутентификации
+                        .successHandler(authenticationSuccessHandler()) //для bean успешной аутентификации
                         .loginPage("/") //страница входа, в случае чего нас туда перебрасывает
                         .loginProcessingUrl("/login") //куда мы отправляем наш логин и пароль
                         .usernameParameter("login") //параметр для входа юзера - по логину

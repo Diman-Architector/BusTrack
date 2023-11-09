@@ -22,7 +22,9 @@ public class User implements UserDetails { //т.к. мы входим по Ло�
     private Long id;
     private String login;
     private String password;
-    @ManyToMany (fetch = FetchType.EAGER) //подгружение ролей пользователей в любом случае
+    @ManyToMany (fetch = FetchType.EAGER) //подгружение ролей пользователей в любом случае;
+    //+ cascade можно добавить - второй параметр при удалении из базы данных будет удалятся и родительский параметр
+
     private Set<Role> roles;
 
     @Override
