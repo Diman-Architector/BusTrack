@@ -32,6 +32,8 @@ btnLogPerform.addEventListener("click", function() { //прописываем с
         alertBox.innerHTML = "Успешная авторизация!";
         toastBootstrap.show();
         modalLog.hide();
+        console.log(xhr);
+        location.href = xhr.responseURL; //переход на успешную страницу юзера
     } else {
         let toastLiveExample = document.getElementById('liveToast');
         let alertBox = document.getElementById('alertBox');

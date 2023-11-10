@@ -26,7 +26,7 @@ function deleteStation() {
     if (selectedStationId == null){
         return;
     }
-    modalConfirm.show();
+
 
     //TODO: реализовать подтверждение удаления
     xhr.open("DELETE", "/api/station?id="+selectedStationId, false); //создадим xhr запрос DELETE на адрес c
@@ -53,7 +53,13 @@ function getStation() {
     }
 }
 
-btnDeleteStation.addEventListener("click",(e) => {deleteStation(); }); //при прослушивании на клик кнопки удалить
+btnDeleteStation.addEventListener("click",(e) => {
+    modalConfirm.show();
+    btnYes.addEventListener("click", (c) => {
+        deleteStation();
+        modalConfirm.hide();
+    })
+}); //при прослушивании на клик кнопки удалить
 //запустится функция deleteStation
 
 btnCreateStation.addEventListener ("click", function(){ //слушатель на клик, с получением модального окна
@@ -69,6 +75,36 @@ btnCreateStation.addEventListener ("click", function(){ //слушатель н�
 btnEditeStation.addEventListener ("click", function(){ //слушатель на клик, с получением модального окна
     getStation();
     });
+btnUpload.addEventListener("click", function() {
+     modalUpload.show();
+ });
+
+btnUploadPerform.addEventListener("click", function() {
+    if (upload.files.length == 0) {
+        alert("Выберете файлы"); //TODO: переделать на уведомления
+        return;
+    }
+    let fileData = new FormData();
+    fileData.append('file', upload.files[0]);
+    //fileData.append('type', "station");
+
+    xhr.open("POST", "/api/file", false);
+    //xhr.setRequestHeader("Content-Type", "multipart/form-data");
+    xhr.send(fileData);
+
+    if (xhr.status == 200) {
+        let toastLiveExample = document.getElementById('liveToast');
+        let alertBox = document.getElementById('alertBox');
+        let toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+        alertBox.innerHTML = xhr.responseText;
+        toastBootstrap.show();
+        modalUpload.hide();
+        updateStations();
+    } else {
+        console.log(xhr);
+    }
+ });
+
 
 function initMap() { //карта
   const map = new google.maps.Map(document.getElementById("map"), {

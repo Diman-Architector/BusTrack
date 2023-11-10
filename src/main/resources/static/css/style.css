@@ -1,5 +1,5 @@
-.crsImg {
-    width:100%;
+.crslImg {
+    width: 100%;
 }
 
 body {
@@ -23,8 +23,13 @@ body {
 .admin-card-long .card-body {
     overflow-y: auto;
 }
+
 .list-group-item:hover {
     background: #a2beff;
+    transition: .6s;
+}
+
+.list-group-item {
     transition: .6s;
 }
 

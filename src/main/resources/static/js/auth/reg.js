@@ -25,7 +25,7 @@ btnRegPerform.addEventListener("click", function() {//прописываем с�
         alertBox.innerHTML = "Успешная регистрация! Можете авторизоваться.";
         toastBootstrap.show();
         modalReg.hide();
-        location.href = xhr.responseUrl; //чтобы из скрипта перейти с одной страницы на другую при успешной регистрации не получилось(((
+
     } else {
         let toastLiveExample = document.getElementById('liveToast');
         let alertBox = document.getElementById('alertBox');

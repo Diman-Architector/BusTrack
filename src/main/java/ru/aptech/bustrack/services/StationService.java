@@ -27,4 +27,8 @@ public class StationService {
         return stationRepository.save(station);
     }
 
+    public int saveAllStations(List<Station> stations) {
+        List<Station> savedStations = stationRepository.saveAll(stations);
+        return savedStations.size();
+    }
 }

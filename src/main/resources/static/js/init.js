@@ -5,6 +5,11 @@ let xhr = new XMLHttpRequest(); //создаем объект xhr в класс�
 let lat = null;
 let lng = null;
 
+/* Модальное окно загрузки */
+const modalUpload = new bootstrap.Modal(document.getElementById('modalUpload'), {});
+let btnUpload = document.getElementById("btnUpload");
+let btnUploadPerform = document.getElementById("btnUploadPerform");
+let upload = document.getElementById("upload");
 
 /*Модальное окно подтверждения*/
 const modalConfirm = new bootstrap.Modal(document.getElementById('modalConfirm'), {}) //получаем модальное окно подтверждение
