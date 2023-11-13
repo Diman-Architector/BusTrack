@@ -1,9 +1,16 @@
 package ru.aptech.bustrack.configs;
 
 public interface Constants {
-    String ROLE_ADMIN_NAME = "ADMIN";
-    String ROLE_USER_NAME = "USER";
-    String ROLE_MODERATOR_NAME = "MODERATOR";
+    interface Roles {
+        String ROLE_ADMIN_NAME = "ADMIN";
+        String ROLE_USER_NAME = "USER";
+        String ROLE_MODERATOR_NAME = "MODERATOR";
+    }
+
+    interface Extensions {
+        String XLSX = "xlsx";
+        String XLS = "xls";
+    }
     String USER_NOT_FOUND_MESSAGE = "Пользователь не найден";
     String BAD_CREDENTIALS_MESSAGE = "Неверный пароль";
     String USER_PAGE_URL = "/user";

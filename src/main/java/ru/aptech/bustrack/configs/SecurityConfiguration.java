@@ -12,13 +12,32 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import ru.aptech.bustrack.services.CustomUserDetailsService;
-
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import java.util.Properties;
 @SuppressWarnings("unused")
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
     @Autowired
     private CustomAuthProvider customAuthProvider; // указываем bean нашего customAuthProvider
+    @Bean
+    public JavaMailSender getJavaMailSender() {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost("smtp.mail.ru");
+        mailSender.setPort(465);
+
+        mailSender.setUsername("");
+        mailSender.setPassword("");
+
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.transport.protocol", "smtp");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.debug", "true");
+
+        return mailSender;
+    }
 
     @Bean
     public CustomUserDetailsService userDetailsService() {
@@ -53,8 +72,8 @@ public class SecurityConfiguration {
                         .antMatchers("/img/**").permitAll()
                         .antMatchers("/js/**").permitAll()
                         .antMatchers("/api/user").permitAll()
-                        .antMatchers("/user").hasAuthority(Constants.ROLE_USER_NAME) //разрешено только для юзера
-                        .antMatchers("/admin").hasAuthority(Constants.ROLE_ADMIN_NAME)
+                        .antMatchers("/user").hasAuthority(Constants.Roles.ROLE_USER_NAME) //разрешено только для юзера
+                        .antMatchers("/admin").hasAuthority(Constants.Roles.ROLE_ADMIN_NAME)
                         .antMatchers("/").permitAll() //список паттернов (маппингов) путей которые приходят разрешены
                         //.antMatchers("/user").hasRole("ADMIN") //доступ на определенный раздел сайта, например user, с сущностью ролей под ADMINом
                         .anyRequest().authenticated() // все другие запросы должны быть через авторизацию

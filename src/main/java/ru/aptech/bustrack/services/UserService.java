@@ -23,6 +23,8 @@ public class UserService {
     @Autowired
     @Qualifier("passwordEncoder")  //нотация для привязки, использования Bean - BCryptPasswordEncoder
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private MailerService mailerService;
 
     /**
      * <b>Возвращает сущность пользователя из БД по его UUID</b>
@@ -59,6 +61,9 @@ public class UserService {
         userRole.setId(3L);
         user.setRoles(Collections.singleton(userRole));//присваиваем Роль в качестве коллекции из одного элемента
         userRepository.save(user);//и сохраняем в базу данных
+        mailerService.send("",
+                "Спасибо за регистрацию!",
+                "Текст письма");
     }
 
     public void updateUser(User user) {

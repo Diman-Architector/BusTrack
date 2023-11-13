@@ -31,4 +31,8 @@ public class StationService {
         List<Station> savedStations = stationRepository.saveAll(stations);
         return savedStations.size();
     }
+    public List<String> findAlreadySavedStationNames(List<String> names) {
+        return stationRepository.findAlreadySavedStationNames(names);
+    }
+
 }
